@@ -1,6 +1,7 @@
 package com.rmm.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -13,22 +14,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
-public class Device implements Serializable {
+public class Customer implements Serializable {
 
-	private static final long serialVersionUID = -7360685728419907371L;
+	private static final long serialVersionUID = 5356889730511280675L;
+	
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
 	@NotEmpty
-	private String systemName;
+	private String login;
 	
 	@NotEmpty
-	private String type;
+	private String password;
 	
-	@ManyToOne
-	@JoinColumn(name = "customer")
-	private Customer customer;
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	private List<Device> devices;
+	
 
 }

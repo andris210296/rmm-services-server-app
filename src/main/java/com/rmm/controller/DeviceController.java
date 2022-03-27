@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.rmm.model.Device;
+import com.rmm.repository.CustomerRepository;
 import com.rmm.repository.DeviceRepository;
 
 @RestController
@@ -14,11 +15,14 @@ import com.rmm.repository.DeviceRepository;
 public class DeviceController {
 
 	@Autowired
+	private CustomerRepository customerRepository;	
+	
+	@Autowired
 	private DeviceRepository deviceRepository;
 	
 	@PostMapping
-	public Device create(@RequestBody Device contact){
-	   return deviceRepository.save(contact);
+	public Device create(@RequestBody Device device){		
+	   return deviceRepository.save(device);
 	}
 
 	@GetMapping
