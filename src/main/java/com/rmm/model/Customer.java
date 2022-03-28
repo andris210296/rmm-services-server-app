@@ -35,5 +35,8 @@ public class Customer implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Device> devices;
 	
+	@OneToMany
+	private List<SystemService> systemServices;
+	
 
 }
