@@ -28,7 +28,6 @@ public class Device implements Serializable {
 	private String type;
 	
 	@ManyToOne
-	@JoinColumn(name = "customer")
 	private Customer customer;
 
 }

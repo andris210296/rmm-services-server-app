@@ -32,7 +32,7 @@ public class Customer implements Serializable {
 	
 	private boolean active;
 	
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<Device> devices;
 	
 
