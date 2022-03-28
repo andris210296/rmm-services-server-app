@@ -15,10 +15,10 @@ public class CustomerController {
 
 	@Autowired
 	private CustomerRepository customerRepository;
-	
-	@PostMapping
-	public Customer create(@RequestBody Customer customer){
-	   return customerRepository.save(customer);
+
+	@PostMapping(value = "/create")
+	public Customer create(@RequestBody Customer customer) {
+		return customerRepository.save(customer);
 	}
 
 	@GetMapping
@@ -26,24 +26,21 @@ public class CustomerController {
 		return customerRepository.findAll();
 	}
 
-
-	@PutMapping(value="/{id}")
+	@PutMapping(value = "/{id}")
 	public ResponseEntity update(@PathVariable("id") long id, @RequestBody Customer customer) {
-	   return customerRepository.findById(id)
-	           .map(record -> {
-	               record.setLogin(customer.getLogin());
-	               record.setPassword(customer.getPassword());
-	               Customer updated = customerRepository.save(customer);
-	               return ResponseEntity.ok().body(updated);
-	           }).orElse(ResponseEntity.notFound().build());
+		return customerRepository.findById(id).map(record -> {
+			record.setUserName(customer.getUserName());
+			record.setPassword(customer.getPassword());
+			Customer updated = customerRepository.save(customer);
+			return ResponseEntity.ok().body(updated);
+		}).orElse(ResponseEntity.notFound().build());
 	}
-	
-	@DeleteMapping(path ={"/{id}"})
-	public ResponseEntity <?> delete(@PathVariable long id) {
-	   return customerRepository.findById(id)
-	           .map(record -> {
-	               customerRepository.deleteById(id);
-	               return ResponseEntity.ok().build();
-	           }).orElse(ResponseEntity.notFound().build());
+
+	@DeleteMapping(path = { "/{id}" })
+	public ResponseEntity<?> delete(@PathVariable long id) {
+		return customerRepository.findById(id).map(record -> {
+			customerRepository.deleteById(id);
+			return ResponseEntity.ok().build();
+		}).orElse(ResponseEntity.notFound().build());
 	}
 }

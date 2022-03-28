@@ -16,18 +16,21 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Customer implements Serializable {
 
-	private static final long serialVersionUID = 5356889730511280675L;
-	
+	private static final long serialVersionUID = 5356889730511280675L;	
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
 	@NotEmpty
-	private String login;
+	private String userName;
 	
 	@NotEmpty
 	private String password;
+	
+	private String roles;
+	
+	private boolean active;
 	
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
 	private List<Device> devices;
