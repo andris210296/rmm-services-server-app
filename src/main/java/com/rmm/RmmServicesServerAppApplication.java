@@ -35,26 +35,26 @@ public class RmmServicesServerAppApplication {
 				systemServiceRepository.save(new SystemService().builder()
 						.id(1)
 						.serviceName("Antivirus")
-						.pricePerSystem(Map.of("Windows", Long.valueOf(5), "Mac", Long.valueOf(7)))
+						.pricePerSystem(Map.of("Windows", 5, "Mac", 7))
 						.build());
 				
 				
 				systemServiceRepository.save(new SystemService().builder()
 						.id(2)
 						.serviceName("CloudBerry")
-						.pricePerSystem(Map.of("Windows", Long.valueOf(3), "Mac", Long.valueOf(3)))
+						.pricePerSystem(Map.of("Windows", 3, "Mac", 3))
 						.build());
 				
 				systemServiceRepository.save( new SystemService().builder()
 						.id(3)
 						.serviceName("PSA")
-						.pricePerSystem(Map.of("Windows", Long.valueOf(2), "Mac", Long.valueOf(2)))
+						.pricePerSystem(Map.of("Windows", 2, "Mac", 2))
 						.build());
 				
 				systemServiceRepository.save(new SystemService().builder()
 						.id(4)
 						.serviceName("TeamViewer")
-						.pricePerSystem(Map.of("Windows", Long.valueOf(1), "Mac", Long.valueOf(1)))
+						.pricePerSystem(Map.of("Windows", 1, "Mac", 1))
 						.build());
 			}
 			

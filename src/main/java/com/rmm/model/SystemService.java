@@ -23,7 +23,7 @@ public class SystemService implements Serializable {
 	private String serviceName;
 		
 	@ElementCollection
-	private Map<String, Long> pricePerSystem;
+	private Map<String, Integer> pricePerSystem;
 
 
 

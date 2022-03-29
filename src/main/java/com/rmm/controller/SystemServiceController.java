@@ -1,18 +1,15 @@
 package com.rmm.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import com.rmm.model.Customer;
-import com.rmm.model.SystemService;
-import com.rmm.model.SystemServiceRequest;
+import com.rmm.model.*;
 import com.rmm.repository.CustomerRepository;
+import com.rmm.repository.DeviceRepository;
 import com.rmm.repository.SystemServiceRepository;
 import com.rmm.security.JwtUtil;
 
@@ -25,6 +22,9 @@ public class SystemServiceController {
 
 	@Autowired
 	private CustomerRepository customerRepository;
+	
+	@Autowired
+	private DeviceRepository deviceRepository;
 
 	@Autowired
 	private SystemServiceRepository systemServiceRepository;
@@ -92,6 +92,47 @@ public class SystemServiceController {
 				
 		return ResponseEntity.ok().build();		
 
+	}
+	
+	@GetMapping(path = { "/myServices/cost" })
+	public ResponseEntity calculateCost(@RequestHeader("Authorization") String authorization) {
+
+		Customer customer = returnCustomerFromToken(authorization);
+		
+		List<Device> devices = deviceRepository.findByCustomer(customer);
+		
+		Map<String, Integer> hashMap = returnMapQuantityOperatingSystem(devices);
+				
+		Integer count = Math.multiplyExact(devices.size(), 4);
+		
+		for (SystemService systemService : customer.getSystemServices()) {
+			for(String key: hashMap.keySet()) {
+				count += Math.multiplyExact(systemService.getPricePerSystem().get(key), hashMap.get(key));
+				
+			}			
+		}		    		
+
+		return ResponseEntity.ok().body(count);
+	}
+
+	public Map<String, Integer> returnMapQuantityOperatingSystem(List<Device> devices) {
+		
+		int countWindows =0;
+		int countMac =0;		
+				
+		for (Device device : devices) {
+			if(device.getType().contains("Windows") || "Windows".equals(device.getType())) 
+				countWindows += 1;
+			else
+				countMac += 1;				
+		}
+		
+		Map<String, Integer> operatingSystems = new HashMap<String, Integer>();
+		operatingSystems.put("Windows", countWindows);
+		operatingSystems.put("Mac", countMac);
+		
+		return operatingSystems;
+		
 	}
 	
 	private Customer returnCustomerFromToken(String token) {
