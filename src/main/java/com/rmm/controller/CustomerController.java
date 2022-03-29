@@ -20,8 +20,8 @@ public class CustomerController {
 		return customerRepository.save(customer);
 	}
 
-	@GetMapping
-	public List findAll() {
+	@GetMapping(value = "/getAllCustomers")
+	public List<Customer> findAll() {
 		return customerRepository.findAll();
 	}
 }

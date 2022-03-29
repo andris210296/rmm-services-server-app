@@ -1,11 +1,10 @@
 package com.rmm.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Data
 public class AuthenticationResquest {
 	

@@ -65,7 +65,7 @@ public class SystemServiceController {
 	}
 	
 	@GetMapping(path = { "/myServices" })
-	public ResponseEntity findById(@RequestHeader("Authorization") String authorization) {
+	public ResponseEntity findAllMyServices(@RequestHeader("Authorization") String authorization) {
 
 		Customer customer = returnCustomerFromToken(authorization);		
 

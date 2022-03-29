@@ -1,27 +1,37 @@
 package com.rmm.controller;
 
 
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.rmm.model.Customer;
-import com.rmm.model.Device;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rmm.model.SystemService;
 import com.rmm.repository.CustomerRepository;
+import com.rmm.repository.DeviceRepository;
+import com.rmm.repository.SystemServiceRepository;
 import com.rmm.security.JwtUtil;
+import com.rmm.testutils.RmmTestHelper;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SystemServiceControllerTest {
+@SpringBootTest
+@AutoConfigureMockMvc
+public class SystemServiceControllerTest extends RmmTestHelper {
 	
 	@Mock
 	private JwtUtil jwtUtil;
@@ -29,113 +39,92 @@ public class SystemServiceControllerTest {
 	@Mock
 	private CustomerRepository customerRepository;
 	
+	@MockBean
+	private DeviceRepository deviceRepository;
+	
 	@InjectMocks
 	private SystemServiceController systemServiceController;
 	
+	@Autowired
+    private MockMvc mockMvc;
 	
-	private static final String AUTHORIZATION = "systemServiceController";
-	private static final String USER_NAME = "userName";
-	private static final String PASSWORD = "userName";
-	
-	@BeforeEach
-	private void init() {
-		MockitoAnnotations.initMocks(this);
-		when(jwtUtil.extractUserName(anyString())).thenReturn(USER_NAME);
-		when(customerRepository.findByUserName(anyString())).thenReturn(generateOptionalCustomer());
-		
-	}
+    @Autowired
+    private ObjectMapper mapper;
+    
+    @MockBean
+    private SystemServiceRepository systemServiceRepository;  
 	
 	@Test
-	public void calculateCostTest() {
+    public void addServiceTest() throws Exception {
+    	
+    	when(systemServiceRepository.findByServiceName(TEAMVIEWER)).thenReturn(generateOptionalSystemServiceTeamViwer());
+    	    	
+    	mockMvc.perform(MockMvcRequestBuilders
+    			.post("/systemService/addService")
+    			.header(AUTHORIZATION, generateBearerToken())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(generateHashMapServiceRequestTeamViewer())))
+                .andExpect(status().isOk());      
+         	
+    }
+	
+	@Test
+    public void findAllMyServicesTest() throws Exception {        
+	        
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                .get("/systemService/myServices")
+                .header(AUTHORIZATION, generateBearerToken())
+                .contentType(MediaType.APPLICATION_JSON))        		
+                .andExpect(status().isOk());
+        
+        String resultString = result.andReturn().getResponse().getContentAsString();
+        
+        List<SystemService> systemService = mapper.readValue(resultString, new TypeReference<List<SystemService>>(){});
+
+       assertEquals(ANTIVIRUS, systemService.get(0).getServiceName());
+    }
+	
+	@Test
+    public void deleteTest() throws Exception {        
+    	
+		when(systemServiceRepository.findByServiceName(ANTIVIRUS)).thenReturn(generateOptionalSystemService());
+        
+        mockMvc.perform(MockMvcRequestBuilders
+                .delete("/systemService/myServices/Antivirus")
+                .header(AUTHORIZATION, generateBearerToken())
+                .contentType(MediaType.APPLICATION_JSON))                     		
+                .andExpect(status().isOk());       
+        
+    }
+	
+	@Test
+	public void calculateCostTest() throws Exception {
+		when(jwtUtil.extractUserName(USER_NAME)).thenReturn(USER_NAME);
+		when(customerRepository.findByUserName(USER_NAME)).thenReturn(generateOptionalCustomer());
+		when(deviceRepository.findByCustomer(generateCustomer())).thenReturn(generateListDevices());
 		
-		systemServiceController.calculateCost(AUTHORIZATION);
-		
-		
-		
+		ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                .get("/systemService/myServices/cost")
+                .header(AUTHORIZATION, generateBearerToken())
+                .contentType(MediaType.APPLICATION_JSON))        		
+                .andExpect(status().isOk());
+        
+        String resultString = result.andReturn().getResponse().getContentAsString();
+ 
+       assertEquals(String.valueOf(24), resultString);			
 	}
 	
 	@Test
 	public void returnMapQuantityOperatingSystemTest() {
 		Map<String, Integer> response = systemServiceController.returnMapQuantityOperatingSystem(generateListDevices());
 		
-		//assertEquals(1, response.get(""));
+		int a = response.get(WINDOWS);
+		
+		assertEquals(1, a);
 
 	}
 	
-	private Customer generateCustomer() {
-		return 	Customer.builder()
-				.id(1)
-				.userName(USER_NAME)
-				.password(PASSWORD)
-				.devices(generateListDevices())
-				.systemServices(generateListSystemService())
-				.build();
-	}
 	
-	private Optional<Customer> generateOptionalCustomer() {
-		return Optional.of(
-				Customer.builder()
-				.id(1)
-				.userName(USER_NAME)
-				.password(PASSWORD)
-				.devices(generateListDevices())
-				.systemServices(generateListSystemService())
-				.build());
-	}
-	
-	private List<Device> generateListDevices(){
-		List<Device> devices = new ArrayList<Device>();
-		
-		devices.add(
-				Device.builder()
-					.id(1)
-					.systemName("MyComputer")
-					.type("Windows Workstation")
-					.build()
-					);
-		
-		devices.add(
-				Device.builder()
-					.id(2)
-					.systemName("MyMac")
-					.type("Mac")
-					.build()
-					);		
-		
-		return devices;
-	}
-	
-	private List<SystemService> generateListSystemService(){
-		
-		HashMap<String, Integer> difValues = new HashMap<String, Integer>();
-		difValues.put("Windows", 5);
-		difValues.put("Mac", 7);
-
-		
-		List<SystemService> systemServices = new ArrayList<SystemService>();
-		
-		systemServices.add(
-				SystemService.builder()
-					.id(1)
-					.serviceName("Antivirus")
-					.pricePerSystem(difValues)
-				.build());
-		
-		
-		
-		HashMap<String, Integer> sameValues = new HashMap<String, Integer>();
-		sameValues.put("Windows", 2);
-		sameValues.put("Mac", 2);
-		
-		systemServices.add(
-				SystemService.builder()
-					.id(2)
-					.serviceName("PSA")
-					.pricePerSystem(sameValues)
-				.build());
-		
-		
-		return systemServices;
-	}
 
 }
