@@ -262,7 +262,7 @@ Response: Status 200 - OK
 
 **e)** To calculate the total monthly cost of the deal, send a  **GET** request to this API **{server}/systemService/myServices/cost**, remender to add the **authentication**.
 
-Request: {server}/systemService/cost - GET
+Request: {server}/systemService/myServices/cost - GET
 Header: Authorization - Bearer {token}
 
 Response:
