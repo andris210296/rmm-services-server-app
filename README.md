@@ -28,7 +28,7 @@ if(systemServiceRepository.findAll().size() != 4) {
 
 # Steps to use the RMM:
 
-##### 1. Customer creation and Authentication
+#### 1. Customer creation and Authentication
 
 **a)** In order to create a customer you must create a **POST** request at the endpoint **{server}/customer/create** with a body as decribed below:
 
@@ -93,7 +93,7 @@ Response:
 ]
 ```
 
-##### 2. Handling Devices
+#### 2. Handling Devices
 
 **a)** To create a device for a customer, send a **POST**  request **authenticated** to this URL **{server}/device/create** with a body as described below:
 
@@ -196,7 +196,7 @@ Header: Authorization - Bearer {token}
 
 Response: Status 200 - OK
 
-##### 3. Handling Services
+#### 3. Handling Services
 
 **a)** To add a service for a customer, send a **POST**  request **authenticated** to this URL **{server}/systemService/addService** with a body as described below:
 
