@@ -5,8 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,9 +17,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rmm.model.systemservice.SystemService;
+import com.rmm.model.customer.CustomerServiceResponse;
+import com.rmm.model.systemservice.CostResponse;
 import com.rmm.repository.CustomerRepository;
 import com.rmm.repository.DeviceRepository;
 import com.rmm.repository.SystemServiceRepository;
@@ -52,21 +50,7 @@ public class SystemServiceControllerTest extends RmmTestHelper {
     
     @MockBean
     private SystemServiceRepository systemServiceRepository;  
-	
-	@Test
-    public void addServiceTest() throws Exception {
-    	
-    	when(systemServiceRepository.findByServiceName(TEAMVIEWER)).thenReturn(generateOptionalSystemServiceTeamViwer());
-    	    	
-    	mockMvc.perform(MockMvcRequestBuilders
-    			.post("/systemService/addService")
-    			.header(AUTHORIZATION, generateBearerToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(this.mapper.writeValueAsString(generateHashMapServiceRequestTeamViewer())))
-                .andExpect(status().isOk());      
-         	
-    }
+
 	
 	@Test
     public void findAllMyServicesTest() throws Exception {        
@@ -79,9 +63,9 @@ public class SystemServiceControllerTest extends RmmTestHelper {
         
         String resultString = result.andReturn().getResponse().getContentAsString();
         
-        List<SystemService> systemService = mapper.readValue(resultString, new TypeReference<List<SystemService>>(){});
+        CustomerServiceResponse systemService = mapper.readValue(resultString,CustomerServiceResponse.class);
 
-       assertEquals(ANTIVIRUS, systemService.get(0).getServiceName());
+       assertEquals(ANTIVIRUS, systemService.getSelectedServices().get(0).getServiceName());
     }
 	
 	@Test
@@ -103,15 +87,17 @@ public class SystemServiceControllerTest extends RmmTestHelper {
 		when(customerRepository.findByUserName(USER_NAME)).thenReturn(generateOptionalCustomer());
 		when(deviceRepository.findByCustomer(generateCustomer())).thenReturn(generateListDevices());
 		
-		ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+	   ResultActions result = mockMvc.perform(MockMvcRequestBuilders
                 .get("/systemService/myServices/cost")
                 .header(AUTHORIZATION, generateBearerToken())
                 .contentType(MediaType.APPLICATION_JSON))        		
                 .andExpect(status().isOk());
         
-        String resultString = result.andReturn().getResponse().getContentAsString();
+       String resultString = result.andReturn().getResponse().getContentAsString();
  
-       assertEquals(String.valueOf(24), resultString);			
+       CostResponse systemService = mapper.readValue(resultString,CostResponse.class);
+        
+       assertEquals(24, systemService.getTotalCost());			
 	}
 	
 	

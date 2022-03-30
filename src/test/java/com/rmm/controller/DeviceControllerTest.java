@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,9 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rmm.model.device.Device;
+import com.rmm.model.device.DeviceResponse;
 import com.rmm.repository.DeviceRepository;
 import com.rmm.testutils.RmmTestHelper;
 
@@ -62,9 +59,9 @@ public class DeviceControllerTest extends RmmTestHelper{
         
         String resultString = result.andReturn().getResponse().getContentAsString();
         
-        List<Device> device = mapper.readValue(resultString, new TypeReference<List<Device>>(){});
+        DeviceResponse device = mapper.readValue(resultString, DeviceResponse.class);
 
-       assertEquals(SERVER_1, device.get(0).getSystemName());
+       assertEquals(SERVER_1, device.getDevices().get(0).getSystemName());
     }
     
     @Test
@@ -80,23 +77,9 @@ public class DeviceControllerTest extends RmmTestHelper{
         
         String resultString = result.andReturn().getResponse().getContentAsString();
         
-        Device device = mapper.readValue(resultString, Device.class);
+        DeviceResponse device = mapper.readValue(resultString, DeviceResponse.class);
 
-       assertEquals(SERVER_1, device.getSystemName());
-    }
-    
-    @Test
-    public void updateTest() throws Exception {        
-    	
-    	when(deviceRepository.findById(1l)).thenReturn(generateOptionalDevice());
-        
-        mockMvc.perform(MockMvcRequestBuilders
-                .put("/device/myDevices/1")
-                .header(AUTHORIZATION, generateBearerToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(this.mapper.writeValueAsString(generateHashMapDeviceDifferent())))        		
-                .andExpect(status().isOk());
-       
+       assertEquals(SERVER_1, device.getDevices().get(0).getSystemName());
     }
     
     @Test
