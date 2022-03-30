@@ -197,3 +197,98 @@ Header: Authorization - Bearer {token}
 Response: Status 200 - OK
 
 ##### 3. Handling Services
+
+**a)** To add a service for a customer, send a **POST**  request **authenticated** to this URL **{server}/systemService/addService** with a body as described below:
+
+Request: {server}/systemService/addService - POST
+Header: Authorization - Bearer {token}
+```json
+{
+    "serviceName":"Antivirus"
+}
+```
+
+Response:
+```json
+{
+    "userName": "user",
+    "selectedServices": [
+        {
+            "serviceName": "PSA",
+            "pricePerSystem": {
+                "Windows": 2,
+                "Mac": 2
+            }
+        }
+    ]
+}
+```
+**Important:** currently there are only the services that were created in **RmmServicesServerAppApplication** class, also it's important to write correctly the **serviceName** to match the  pre storaged services' name. Eventually this requirement won't be needed in further updates, but the documentation task didn't require this improvement.
+
+**b)** In case you want to verify all added services, access this rest **{server}/systemService/myServices** with a **GET** request. Also add the generated token at the **Header**:
+
+Request: {server}systemService/myServices - GET
+Header: Authorization - Bearer {token}
+
+Response:
+```json
+{
+    "userName": "user",
+    "selectedServices": [
+        {
+            "serviceName": "Antivirus",
+            "pricePerSystem": {
+                "Windows": 5,
+                "Mac": 7
+            }
+        },
+        {
+            "serviceName": "PSA",
+            "pricePerSystem": {
+                "Windows": 2,
+                "Mac": 2
+            }
+        }
+    ]
+}
+```
+
+**c)** To delete a selected service send a **DELETE**  request **authenticated** to this URL **{server}/device/myDevices/{serviceName}** with the service name that you want to exclude:
+
+Request: {server}/systemService/myServices/{serviceName} - DELETE
+Header: Authorization - Bearer {token}
+
+Response: Status 200 - OK
+
+**e)** To calculate the total monthly cost of the deal, send a  **GET** request to this API **{server}/systemService/myServices/cost**, remender to add the **authentication**.
+
+Request: {server}/systemService/cost - GET
+Header: Authorization - Bearer {token}
+
+Response:
+```json
+{
+    "devicesQuantity": {
+        "Windows": 0,
+        "Mac": 1
+    },
+    "selectedServices": [
+        {
+            "serviceName": "Antivirus",
+            "pricePerSystem": {
+                "Windows": 5,
+                "Mac": 7
+            }
+        }
+    ],
+    "totalCost": 11
+}
+```
+**Important:** Example of the calculation:
+Customer with 2 Windows, 3 Mac with Antivirus, Cloudberry and TeamViewer = $71
+Explanation: 
+* Devices cost: $20 ($4 each)
+* Antivirus cost: $31
+* Cloudberry cost: $15
+* TeamViewer cost: $5
+* Total: $71
