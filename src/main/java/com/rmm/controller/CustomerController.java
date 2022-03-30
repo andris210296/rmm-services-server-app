@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.rmm.model.Customer;
+import com.rmm.model.customer.Customer;
 import com.rmm.repository.CustomerRepository;
 
 @RestController

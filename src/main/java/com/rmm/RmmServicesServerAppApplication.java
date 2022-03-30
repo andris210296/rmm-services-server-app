@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Component;
 
-import com.rmm.model.SystemService;
+import com.rmm.model.systemservice.SystemService;
 import com.rmm.repository.CustomerRepository;
 import com.rmm.repository.SystemServiceRepository;
 
@@ -41,7 +41,7 @@ public class RmmServicesServerAppApplication {
 				
 				systemServiceRepository.save(new SystemService().builder()
 						.id(2)
-						.serviceName("CloudBerry")
+						.serviceName("Cloudberry")
 						.pricePerSystem(Map.of("Windows", 3, "Mac", 3))
 						.build());
 				

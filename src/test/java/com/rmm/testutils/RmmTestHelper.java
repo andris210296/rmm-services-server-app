@@ -9,6 +9,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.rmm.model.*;
+import com.rmm.model.authentication.AuthenticationResquest;
+import com.rmm.model.authentication.MyUserDetails;
+import com.rmm.model.customer.Customer;
+import com.rmm.model.device.Device;
+import com.rmm.model.systemservice.SystemService;
 import com.rmm.repository.CustomerRepository;
 import com.rmm.security.JwtUtil;
 import com.rmm.security.MyUserDetailsService;

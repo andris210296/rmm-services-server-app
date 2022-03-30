@@ -1,4 +1,4 @@
-package com.rmm.model;
+package com.rmm.model.systemservice;
 
 import java.io.Serializable;
 import java.util.Map;

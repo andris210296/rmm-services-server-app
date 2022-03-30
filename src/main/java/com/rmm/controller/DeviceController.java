@@ -7,11 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import com.rmm.model.Customer;
-import com.rmm.model.Device;
+import com.rmm.model.customer.Customer;
+import com.rmm.model.device.Device;
+import com.rmm.model.device.DeviceResponse;
 import com.rmm.repository.CustomerRepository;
 import com.rmm.repository.DeviceRepository;
 import com.rmm.security.JwtUtil;
+import com.rmm.utils.RmmUtils;
 
 @RestController
 @RequestMapping({ "/device" })
@@ -25,35 +27,40 @@ public class DeviceController {
 
 	@Autowired
 	private DeviceRepository deviceRepository;
+	
+	private static final String AUTHORIZATION = "Authorization";
 
 	@PostMapping(value = "/create")
-	public Device create(@RequestHeader("Authorization") String authorization, @RequestBody Device device) {
+	public DeviceResponse create(@RequestHeader(AUTHORIZATION) String authorization, @RequestBody Device device) {
 
 		Customer customer = returnCustomerFromToken(authorization);
 
 		device.setCustomer(customer);
-		return deviceRepository.save(device);
+		deviceRepository.save(device);
+		
+		return RmmUtils.deviceToDeviceResponse(device);
 	}
 
 	@GetMapping(value = "/myDevices")
-	public List<Device> findByCustomer(@RequestHeader("Authorization") String authorization) {
+	public DeviceResponse findByCustomer(@RequestHeader(AUTHORIZATION) String authorization) {
 
 		Customer customer = returnCustomerFromToken(authorization);
 
-		return deviceRepository.findByCustomer(customer);
+		List<Device> devices = deviceRepository.findByCustomer(customer);
+		return RmmUtils.listDeviceToListDeviceResponse(devices);
 	}
 
 	@GetMapping(path = { "/myDevices/{id}" })
-	public ResponseEntity findById(@RequestHeader("Authorization") String authorization, @PathVariable long id) {
+	public ResponseEntity findById(@RequestHeader(AUTHORIZATION) String authorization, @PathVariable long id) {
 
 		Customer customer = returnCustomerFromToken(authorization);
 
 		return deviceRepository.findById(id).filter(device -> device.getCustomer().getId() == customer.getId())
-				.map(device -> ResponseEntity.ok().body(device)).orElse(ResponseEntity.notFound().build());
+				.map(device -> ResponseEntity.ok().body(RmmUtils.deviceToDeviceResponse(device))).orElse(ResponseEntity.notFound().build());
 	}
 
 	@PutMapping(value = "/myDevices/{id}")
-	public ResponseEntity update(@RequestHeader("Authorization") String authorization, @PathVariable("id") long id,
+	public ResponseEntity update(@RequestHeader(AUTHORIZATION) String authorization, @PathVariable("id") long id,
 			@RequestBody Device device) {
 
 		Customer customer = returnCustomerFromToken(authorization);
@@ -63,12 +70,12 @@ public class DeviceController {
 					record.setSystemName(device.getSystemName());
 					record.setType(device.getType());
 					Device updated = deviceRepository.save(record);
-					return ResponseEntity.ok().body(updated);
+					return ResponseEntity.ok().body(RmmUtils.deviceToDeviceResponse(updated));
 				}).orElse(ResponseEntity.notFound().build());
 	}
 
 	@DeleteMapping(path = { "/myDevices/{id}" })
-	public ResponseEntity<?> delete(@RequestHeader("Authorization") String authorization, @PathVariable long id) {
+	public ResponseEntity<?> delete(@RequestHeader(AUTHORIZATION) String authorization, @PathVariable long id) {
 
 		Customer customer = returnCustomerFromToken(authorization);
 

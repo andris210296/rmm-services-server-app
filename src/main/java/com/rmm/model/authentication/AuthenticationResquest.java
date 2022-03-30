@@ -1,4 +1,4 @@
-package com.rmm.model;
+package com.rmm.model.authentication;
 
 import lombok.*;
 

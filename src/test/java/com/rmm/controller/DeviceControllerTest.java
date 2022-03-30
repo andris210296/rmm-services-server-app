@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rmm.model.Device;
+import com.rmm.model.device.Device;
 import com.rmm.repository.DeviceRepository;
 import com.rmm.testutils.RmmTestHelper;
 

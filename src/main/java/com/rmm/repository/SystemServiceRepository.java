@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.rmm.model.SystemService;
+import com.rmm.model.systemservice.SystemService;
 
 @Repository
 public interface SystemServiceRepository extends JpaRepository<SystemService, Long> {

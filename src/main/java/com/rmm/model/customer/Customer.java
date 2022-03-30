@@ -1,10 +1,13 @@
-package com.rmm.model;
+package com.rmm.model.customer;
 
 import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+
+import com.rmm.model.device.Device;
+import com.rmm.model.systemservice.SystemService;
 
 import lombok.*;
 
@@ -25,11 +28,7 @@ public class Customer implements Serializable {
 	private String userName;
 	
 	@NotEmpty
-	private String password;
-	
-	private String roles;
-	
-	private boolean active;
+	private String password;	
 	
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Device> devices;

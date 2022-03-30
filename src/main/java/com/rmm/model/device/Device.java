@@ -1,9 +1,11 @@
-package com.rmm.model;
+package com.rmm.model.device;
 
 import java.io.Serializable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+
+import com.rmm.model.customer.Customer;
 
 import lombok.*;
 

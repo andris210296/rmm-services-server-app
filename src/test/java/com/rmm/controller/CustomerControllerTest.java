@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rmm.model.Customer;
+import com.rmm.model.customer.Customer;
 import com.rmm.testutils.RmmTestHelper;
 
 @SpringBootTest

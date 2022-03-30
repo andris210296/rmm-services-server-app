@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,7 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rmm.model.SystemService;
+import com.rmm.model.systemservice.SystemService;
 import com.rmm.repository.CustomerRepository;
 import com.rmm.repository.DeviceRepository;
 import com.rmm.repository.SystemServiceRepository;
@@ -115,16 +114,5 @@ public class SystemServiceControllerTest extends RmmTestHelper {
        assertEquals(String.valueOf(24), resultString);			
 	}
 	
-	@Test
-	public void returnMapQuantityOperatingSystemTest() {
-		Map<String, Integer> response = systemServiceController.returnMapQuantityOperatingSystem(generateListDevices());
-		
-		int a = response.get(WINDOWS);
-		
-		assertEquals(1, a);
-
-	}
 	
-	
-
 }

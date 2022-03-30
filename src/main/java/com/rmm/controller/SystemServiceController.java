@@ -7,11 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import com.rmm.model.*;
+import com.rmm.model.customer.Customer;
+import com.rmm.model.device.Device;
+import com.rmm.model.systemservice.SystemService;
+import com.rmm.model.systemservice.SystemServiceRequest;
 import com.rmm.repository.CustomerRepository;
 import com.rmm.repository.DeviceRepository;
 import com.rmm.repository.SystemServiceRepository;
 import com.rmm.security.JwtUtil;
+import com.rmm.utils.RmmUtils;
 
 @RestController
 @RequestMapping({ "/systemService" })
@@ -28,9 +32,11 @@ public class SystemServiceController {
 
 	@Autowired
 	private SystemServiceRepository systemServiceRepository;
+	
+	private static final String AUTHORIZATION = "Authorization";
 
 	@PostMapping(value = "/addService")
-	public ResponseEntity create(@RequestHeader("Authorization") String authorization, @RequestBody SystemServiceRequest systemServiceRequest) {
+	public ResponseEntity create(@RequestHeader(AUTHORIZATION) String authorization, @RequestBody SystemServiceRequest systemServiceRequest) {
 
 		Optional<SystemService> systemService = systemServiceRepository.findByServiceName(systemServiceRequest.getServiceName());
 		
@@ -50,30 +56,30 @@ public class SystemServiceController {
 			
 			Customer updated = customerRepository.save(customer);
 			
-			return ResponseEntity.ok().body(updated);
+			return ResponseEntity.ok().body(RmmUtils.customerToCustomerServiceResponse(updated));
 		}
 		
 		if(customer.getSystemServices().stream().anyMatch(service -> service.getServiceName().equals(systemServiceRequest.getServiceName()))) {
-			return ResponseEntity.badRequest().body("This service has been already selected");
+			return ResponseEntity.badRequest().body(RmmUtils.createMessage("This service has been already selected"));
 		}
 		
 		customer.getSystemServices().add(systemService.get());
 		
 		Customer updated = customerRepository.save(customer);
 		
-		return ResponseEntity.ok().body(updated);
+		return ResponseEntity.ok().body(RmmUtils.customerToCustomerServiceResponse(updated));
 	}
 	
 	@GetMapping(path = { "/myServices" })
-	public ResponseEntity findAllMyServices(@RequestHeader("Authorization") String authorization) {
+	public ResponseEntity findAllMyServices(@RequestHeader(AUTHORIZATION) String authorization) {
 
 		Customer customer = returnCustomerFromToken(authorization);		
 
-		return ResponseEntity.ok().body(customer.getSystemServices());
+		return ResponseEntity.ok().body(RmmUtils.customerToCustomerServiceResponse(customer));
 	}
 	
 	@DeleteMapping(path = { "/myServices/{serviceName}" })
-	public ResponseEntity<?> delete(@RequestHeader("Authorization") String authorization, @PathVariable String serviceName) {
+	public ResponseEntity<?> delete(@RequestHeader(AUTHORIZATION) String authorization, @PathVariable String serviceName) {
 
 		Optional<SystemService> systemService = systemServiceRepository.findByServiceName(serviceName);
 		
@@ -95,46 +101,19 @@ public class SystemServiceController {
 	}
 	
 	@GetMapping(path = { "/myServices/cost" })
-	public ResponseEntity calculateCost(@RequestHeader("Authorization") String authorization) {
+	public ResponseEntity calculateCost(@RequestHeader(AUTHORIZATION) String authorization) {
 
 		Customer customer = returnCustomerFromToken(authorization);
 		
 		List<Device> devices = deviceRepository.findByCustomer(customer);
 		
-		Map<String, Integer> hashMap = returnMapQuantityOperatingSystem(devices);
+		Map<String, Integer> hashMapDevicesQuantity = RmmUtils.returnMapQuantityOperatingSystem(devices);
 				
-		Integer count = Math.multiplyExact(devices.size(), 4);
+		Integer count = RmmUtils.calculatePrice(customer, devices);
 		
-		for (SystemService systemService : customer.getSystemServices()) {
-			for(String key: hashMap.keySet()) {
-				count += Math.multiplyExact(systemService.getPricePerSystem().get(key), hashMap.get(key));
-				
-			}			
-		}		    		
-
-		return ResponseEntity.ok().body(count);
+		return ResponseEntity.ok().body(RmmUtils.generateCostResponse(customer, hashMapDevicesQuantity, count));
 	}
-
-	public Map<String, Integer> returnMapQuantityOperatingSystem(List<Device> devices) {
 		
-		int countWindows =0;
-		int countMac =0;		
-				
-		for (Device device : devices) {
-			if(device.getType().contains("Windows") || "Windows".equals(device.getType())) 
-				countWindows += 1;
-			else
-				countMac += 1;				
-		}
-		
-		Map<String, Integer> operatingSystems = new HashMap<String, Integer>();
-		operatingSystems.put("Windows", countWindows);
-		operatingSystems.put("Mac", countMac);
-		
-		return operatingSystems;
-		
-	}
-	
 	private Customer returnCustomerFromToken(String token) {
 		String jwt = token.substring(7);
 		String userName = jwtUtil.extractUserName(jwt);
