@@ -204,7 +204,7 @@ Request: {server}/systemService/addService - POST
 Header: Authorization - Bearer {token}
 ```json
 {
-    "serviceName":"Antivirus"
+    "serviceName":"PSA"
 }
 ```
 
