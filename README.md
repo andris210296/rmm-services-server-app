@@ -2,6 +2,7 @@
 This project is Remote Monitoring and Management system that allows customers create an account, login, add device and select services. Also this project calculates the total monthly cost of the deal depending on selected services and the number of devices in database
 
 **Important details**
+
 Currently on **RmmServicesServerAppApplication** class, at the start of the system some Services are pre storaged due to the test requirements, as described below:
 | Service Name   |      Price Windows      |  Price Mac |
 |----------|:-------------:|------:|
@@ -29,18 +30,29 @@ if(systemServiceRepository.findAll().size() != 4) {
 
 ##### 1. Customer creation and Authentication
 
-a. In order to create a customer you must create a **POST** request at the endpoint **localhost:8080/customer/create** with a body as decribed below:
+a. In order to create a customer you must create a **POST** request at the endpoint **{server}/customer/create** with a body as decribed below:
 
-Request: localhost:8080/customer/create
+Request: {server}/customer/create - POST
 ```json
 {
     "userName":"login",
     "password":"anypassowrd"
 }
 ```
-b. To authenticate your customer and access the other endpoints, you must create a **POST** request at the endpoint **localhost:8080/authenticate** and in case of success a token will be generated as result:
+Response:
+```json
+{
+    "id": 14,
+    "userName": "user",
+    "password": "password",
+    "devices": null,
+    "systemServices": null
+}
+```
 
-Request: localhost:8080/authenticate 
+b. To authenticate your customer and access the other endpoints, you must create a **POST** request at the endpoint **{server}/authenticate** and in case of success a token will be generated as result:
+
+Request: {server}/authenticate - POST
 ```json
 {
     "userName":"login",
@@ -56,7 +68,10 @@ Response:
 ```
 With this generated token, you can add to the **Header**  at **Authorization** - **Bearer {generated token}**
 
-c. In case you want to verify all created customers, access this rest **localhost:8080/customer/getAllCustomers** with a **GET** request. Also add the generated token at the **Header**:
+c. In case you want to verify all created customers, access this rest **{server}/customer/getAllCustomers** with a **GET** request. Also add the generated token at the **Header**:
+
+Request: {server}/customer/getAllCustomers - GET
+Header: Authorization - Bearer {token}
 
 Response:
 ```json
@@ -80,3 +95,105 @@ Response:
 
 ##### 2. Handling Devices
 
+a. To create a device for a customer, send a **POST**  request **authenticated** to this URL **{server}/device/create** with a body as described below:
+
+Request: {server}/device/create - POST
+Header: Authorization - Bearer {token}
+```json
+{
+    "systemName":"Windows PC",
+    "type":"Windows"
+}
+```
+
+Response:
+```json
+{
+    "userName": "user",
+    "devices": [
+        {
+            "id": 13,
+            "systemName": "Windows PC",
+            "type": "Windows"
+        }
+    ]
+}
+```
+**Important:** In order to work properly write correctly the words **Windows**, **Windows Workstation**, **Windows Server** or **Mac**, further updates will allow different kinds of Operating Systems. Those OPs were defined by the task documentation.
+
+b. In case you want to verify all created devices, access this rest **{server}/device/myDevices** with a **GET** request. Also add the generated token at the **Header**:
+
+Request: {server}/device/myDevices - GET
+Header: Authorization - Bearer {token}
+
+Response:
+```json
+{
+    "userName": "user",
+    "devices": [
+        {
+            "id": 13,
+            "systemName": "Windows PC",
+            "type": "Windows"
+        },
+        {
+            "id": 15,
+            "systemName": "Mac computer",
+            "type": "Mac"
+        }
+    ]
+}
+```
+
+c. To recover a specific device make a **GET** request to this API **{server}/device/myDevices/{id}** and change the **{id}** for a valid device **id**, remender to add the **authentication**
+
+Request: {server}/device/myDevices/{id} - GET
+Header: Authorization - Bearer {token}
+
+Response:
+```json
+{
+    "userName": "user",
+    "devices": [
+        {
+            "id": 13,
+            "systemName": "Windows PC",
+            "type": "Windows"
+        }
+    ]
+}
+```
+
+d. To update a device send a **PUT**  request **authenticated** to this URL **{server}/device/myDevices/{id}** with the device id that you want to change and a **body** with new values to be changed:
+
+Request: {server}/device/myDevices/{id} - PUT
+Header: Authorization - Bearer {token}
+```json
+{
+    "systemName":"New System",
+    "type":"Mac"
+}
+```
+
+Response:
+```json
+{
+    "userName": "user",
+    "devices": [
+        {
+            "id": 13,
+            "systemName": "New System",
+            "type": "Mac"
+        }
+    ]
+}
+```
+
+e. To delete a device send a **DELETE**  request **authenticated** to this URL **{server}/device/myDevices/{id}** with the device id that you want to delete:
+
+Request: {server}/device/myDevices/{id} - DELETE
+Header: Authorization - Bearer {token}
+
+Response: Status 200 - OK
+
+##### 3. Handling Services
