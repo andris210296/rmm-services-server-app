@@ -30,13 +30,13 @@ if(systemServiceRepository.findAll().size() != 4) {
 
 ##### 1. Customer creation and Authentication
 
-a. In order to create a customer you must create a **POST** request at the endpoint **{server}/customer/create** with a body as decribed below:
+**a)** In order to create a customer you must create a **POST** request at the endpoint **{server}/customer/create** with a body as decribed below:
 
 Request: {server}/customer/create - POST
 ```json
 {
-    "userName":"login",
-    "password":"anypassowrd"
+    "userName":"user",
+    "password":"password"
 }
 ```
 Response:
@@ -50,13 +50,13 @@ Response:
 }
 ```
 
-b. To authenticate your customer and access the other endpoints, you must create a **POST** request at the endpoint **{server}/authenticate** and in case of success a token will be generated as result:
+**b)** To authenticate your customer and access the other endpoints, you must create a **POST** request at the endpoint **{server}/authenticate** and in case of success a token will be generated as result:
 
 Request: {server}/authenticate - POST
 ```json
 {
-    "userName":"login",
-    "password":"anypassowrd"
+    "userName":"user",
+    "password":"password"
 }
 ```
 
@@ -68,7 +68,7 @@ Response:
 ```
 With this generated token, you can add to the **Header**  at **Authorization** - **Bearer {generated token}**
 
-c. In case you want to verify all created customers, access this rest **{server}/customer/getAllCustomers** with a **GET** request. Also add the generated token at the **Header**:
+**c)** In case you want to verify all created customers, access this rest **{server}/customer/getAllCustomers** with a **GET** request. Also add the generated token at the **Header**:
 
 Request: {server}/customer/getAllCustomers - GET
 Header: Authorization - Bearer {token}
@@ -95,7 +95,7 @@ Response:
 
 ##### 2. Handling Devices
 
-a. To create a device for a customer, send a **POST**  request **authenticated** to this URL **{server}/device/create** with a body as described below:
+**a)** To create a device for a customer, send a **POST**  request **authenticated** to this URL **{server}/device/create** with a body as described below:
 
 Request: {server}/device/create - POST
 Header: Authorization - Bearer {token}
@@ -121,7 +121,7 @@ Response:
 ```
 **Important:** In order to work properly write correctly the words **Windows**, **Windows Workstation**, **Windows Server** or **Mac**, further updates will allow different kinds of Operating Systems. Those OPs were defined by the task documentation.
 
-b. In case you want to verify all created devices, access this rest **{server}/device/myDevices** with a **GET** request. Also add the generated token at the **Header**:
+**b)** In case you want to verify all created devices, access this rest **{server}/device/myDevices** with a **GET** request. Also add the generated token at the **Header**:
 
 Request: {server}/device/myDevices - GET
 Header: Authorization - Bearer {token}
@@ -145,7 +145,7 @@ Response:
 }
 ```
 
-c. To recover a specific device make a **GET** request to this API **{server}/device/myDevices/{id}** and change the **{id}** for a valid device **id**, remender to add the **authentication**
+**c)** To recover a specific device make a **GET** request to this API **{server}/device/myDevices/{id}** and change the **{id}** for a valid device **id**, remender to add the **authentication**
 
 Request: {server}/device/myDevices/{id} - GET
 Header: Authorization - Bearer {token}
@@ -164,7 +164,7 @@ Response:
 }
 ```
 
-d. To update a device send a **PUT**  request **authenticated** to this URL **{server}/device/myDevices/{id}** with the device id that you want to change and a **body** with new values to be changed:
+**d)** To update a device send a **PUT**  request **authenticated** to this URL **{server}/device/myDevices/{id}** with the device id that you want to change and a **body** with new values to be changed:
 
 Request: {server}/device/myDevices/{id} - PUT
 Header: Authorization - Bearer {token}
@@ -189,7 +189,7 @@ Response:
 }
 ```
 
-e. To delete a device send a **DELETE**  request **authenticated** to this URL **{server}/device/myDevices/{id}** with the device id that you want to delete:
+**e)** To delete a device send a **DELETE**  request **authenticated** to this URL **{server}/device/myDevices/{id}** with the device id that you want to delete:
 
 Request: {server}/device/myDevices/{id} - DELETE
 Header: Authorization - Bearer {token}
