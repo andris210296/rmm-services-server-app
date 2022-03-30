@@ -1,5 +1,5 @@
 # rmm-services-server-app
-This project is Remote Monitoring and Management system that allows customers create an account, login, add device and select services. Also this project calculates the total monthly cost of the deal depending on selected services and the number of devices in database
+This project is a Remote Monitoring and Management system that allows customers to create an account, login, add a device and select services. Also, this project calculates the total monthly cost of the deal depending on selected services and the number of devices in the database
 
 **Important details**
 
