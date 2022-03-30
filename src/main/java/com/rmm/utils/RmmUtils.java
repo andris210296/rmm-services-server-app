@@ -30,7 +30,7 @@ public class RmmUtils {
 				.build();		
 	}
 	
-	public static DeviceResponse listDeviceToListDeviceResponse(List<Device> devices){
+	public static DeviceResponse listDeviceToListDeviceResponse(Customer customer, List<Device> devices){
 		
 		List<DeviceList> deviceLists = new ArrayList<DeviceList>();
 		for (Device device : devices) {
@@ -39,7 +39,7 @@ public class RmmUtils {
 		
 		
 		return DeviceResponse.builder()
-				.userName(devices.get(0).getCustomer().getUserName())
+				.userName(customer.getUserName())
 				.devices(deviceLists)
 				.build();	
 	}

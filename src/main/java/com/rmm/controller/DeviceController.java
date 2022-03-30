@@ -47,7 +47,7 @@ public class DeviceController {
 		Customer customer = returnCustomerFromToken(authorization);
 
 		List<Device> devices = deviceRepository.findByCustomer(customer);
-		return RmmUtils.listDeviceToListDeviceResponse(devices);
+		return RmmUtils.listDeviceToListDeviceResponse(customer, devices);
 	}
 
 	@GetMapping(path = { "/myDevices/{id}" })
